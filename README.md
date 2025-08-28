@@ -1,135 +1,128 @@
-![keyviz-2.0](previews/banner.svg)
+# Linux Port Status for Keyviz
 
-Keyviz is a free and open-source software to visualise your keystrokes and mouse actions in real time! Let your audience know what handy shortcuts/keys you're pressing during screencasts, presentations, collaborations, or whenever you need it.
+## Current Status: ⚠️ PARTIALLY FUNCTIONAL
 
-**English** | [简体中文](./README_zh_CN.md)
+This Linux port has **significant limitations** and is currently **not recommended for production use**.
 
-# ⌨️ Keystrokes & 🖱️ Mouse Actions
+## What Works ✅
+- ✅ Input detection (keyboard and mouse events are captured)
+- ✅ Basic Flutter application launches
+- ✅ Builds successfully on Ubuntu 24.04.3 LTS
+- ✅ Proper .deb package generation
 
-Now you can visualize mouse actions! Not only mouse clicks, you can also visualize mouse actions along with keystrokes like <kbd>Cmd</kbd> + <kbd>Click</kbd>, <kbd>Alt</kbd> + <kbd>Drag</kbd>, etc.
+## Critical Issues ❌
 
-![key-visualizer](previews/visualizer-bar.svg)
-
-# 🎨 Stylize
-
-Don't restrain yourself to just black & white! You can customize every aspect of the visualization. The visualisation's style, size, colour (modifier and regular keys), border, icon, etc.
-
-![settings-window](previews/settings.svg)
-
-Powerful and easy-to-use configuration options.
-
-- Filter normal keys and only display shortcuts like <kbd>Cmd</kbd> + <kbd>K</kbd> **(Default)**
-- Adjust the visualisation position on the screen
-- Decide how much the visualisation lingers on the screen before animating out
-- Switch between animation presets to animate your visualisation in & out
-
-</br>
-
-# 📥 Installation
-
-You can download the latest version of keyviz from the [Github Releases](https://github.com/mulaRahul/keyviz/releases) page. For the installer, unzip the downloaded file, run the installer and follow the familiar steps to install keyviz.
-
-Below are the platform specifics options and requirements -
-
-<details>
-
-  <summary>🪟 Windows</summary>
-
-  ### 👜 Microsoft Store
-  You can download keyviz directly from the [microsoft store](https://apps.microsoft.com/detail/Keyviz/9phzpj643p7l?mode=direct).
-
-  ### 🥄 Scoop
-   ```bash
-  scoop bucket add extras # first, add the bucket
-  scoop install keyviz
-  ```
-
-  ### 📦 Winget
-  ```bash
-  winget install mulaRahul.Keyviz
-  ```
-
-  </br>
-
-  <details>
-  <summary><code>*.dll</code> missing error?</summary>
-
-  If you're getting a `.dll` missing error after installing the application, you're missing the required Visual C++ redistributables. You can get the same from here [VSC++ Redist](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170).
-
-  </details>
-
-</details>
-
-</br>
-
-<details>
-
-  <summary>🍎 MacOS</summary>
-
-  ### 🔒 Permission
-  
-  Keyviz requires **Input Monitoring** and **Accessibility** permissions. Enable the same in settings -
-  </br>
-  ```
-  Settings > Privacy & Security > Input Monitoring/Accessibility
-  ```
-
-  </br>
-
-</details>
-
-</br>
-
-<details>
-
-  <summary>🐧 Linux</summary>
-
-  ### v2.x.x Requirements
-   ```bash
-  sudo apt-get install libayatana-appindicator3-dev
-  ```
-  or
-  ```bash
-  sudo apt-get install appindicator3-0.1 libappindicator3-dev
-  ```
-
-  ### Install debian package
-  ```bash
-  sudo apt install ./keyviz.deb
-  ```
-  or
-  ### Install RPM
-  ```bash
-  sudo rpm -i app.rpm
-  ```
-
-  </br>
-
-</details>
-
-
-</br>
-
-# 🛠️ Build Instructions
-
-You can always further develop/build the project by yourself. First of all ensure that you've setup Flutter on your system. If not follow this [guide](https://docs.flutter.dev/get-started/install).
-
-After setting up flutter, clone the repository if you have `git` installed or download the zip and unpack the same.
-
-```bash
-mkdir keyviz
-cd keyviz
-git clone https://github.com/mulaRahul/keyviz.git .
+### 1. Window Manager Plugin Failures
+The `window_manager` Flutter plugin is missing Linux implementations for essential methods:
+```
+MissingPluginException: No implementation found for method setIgnoreMouseEvents
+MissingPluginException: No implementation found for method setHasShadow
 ```
 
-Move inside the flutter project and run the build command to create an executable -
+**Impact**: Application crashes when trying to configure window behavior, making it unusable for its intended purpose.
 
-```bash
-flutter build windows
+### 2. Missing Configuration Files
+The application expects configuration files that don't exist:
+```
+File: '/home/stephan/Documents/config.json' not found!
+File: '/home/stephan/Documents/style.json' not found!
 ```
 
-</br>
+**Impact**: Application may not save/load user preferences properly.
 
-# 💖 Support
+### 3. Disabled Features
+- Window transparency effects (intentionally disabled for Linux compatibility)
+- Platform-specific window manipulations
 
-As keyviz is freeware, the only way I can earn is through your generous donations. It helps free my time and work more on keyviz.
+## Technical Implementation Details
+
+### Dependencies Modified
+In `pubspec.yaml`:
+```yaml
+# flutter_acrylic: ^1.1.4  # Temporarily disabled for Linux compatibility  
+# macos_window_utils: ^1.8.4  # macOS-only dependency
+```
+
+### Code Changes Made
+In `lib/main.dart`:
+- Commented out `flutter_acrylic` and `macos_window_utils` imports
+- Disabled `Window.initialize()` call
+- Added debug messages for disabled transparency effects
+
+### Build Requirements
+**Critical**: C++ compilation requires specific include paths:
+```bash
+export CPLUS_INCLUDE_PATH=/usr/include/c++/13:/usr/include/x86_64-linux-gnu/c++/13:$CPLUS_INCLUDE_PATH
+```
+
+### System Dependencies
+```bash
+sudo apt install libayatana-appindicator3-dev mpv libgtk-3-dev libstdc++-12-dev
+```
+
+## Root Cause Analysis
+
+### The Real Problem
+The original `keyviz-2.0.0a3-linux.deb` failure was **NOT** due to missing system libraries, but rather:
+
+1. **Incorrect dependency names** in the .deb control file
+2. **Missing Linux plugin implementations** in Flutter dependencies
+3. **Premature alpha release** without proper Linux testing
+
+### Why This Port Has Limited Value
+- The `window_manager` plugin lacks essential Linux support
+- Core functionality (window positioning, transparency, mouse event handling) is broken
+- This is fundamentally a **Flutter ecosystem limitation**, not a packaging issue
+
+## Recommendations
+
+### For Users
+- **DO NOT USE** this port for production/presentation purposes
+- Wait for official Linux support from the keyviz maintainers
+- Consider alternative keystroke visualization tools (see below)
+
+### For Developers
+1. **Contribute to upstream Flutter plugins**:
+    - `window_manager` needs Linux implementations for `setIgnoreMouseEvents`, `setHasShadow`
+    - `flutter_acrylic` needs Linux transparency support
+
+2. **Alternative approaches**:
+    - Use native Linux libraries (e.g., X11/Wayland directly)
+    - Implement as a native GTK/Qt application
+    - Use Electron with native Node.js modules
+
+## Building This Port
+
+### Prerequisites
+```bash
+# Install Flutter
+sudo apt install clang cmake ninja-build pkg-config libgtk-3-dev libstdc++-12-dev
+sudo apt install libayatana-appindicator3-dev mpv
+
+# Set C++ include paths (critical!)
+export CPLUS_INCLUDE_PATH=/usr/include/c++/13:/usr/include/x86_64-linux-gnu/c++/13:$CPLUS_INCLUDE_PATH
+```
+
+### Build Commands
+```bash
+flutter pub get
+flutter build linux --release
+```
+
+### Package Creation
+```bash
+# Create .deb structure and build
+dpkg-deb --build keyviz-linux-deb keyviz-2.0.0-alpha2-linux1_amd64.deb
+```
+
+## Conclusion
+
+This port demonstrates that keyviz **CAN** be compiled for Linux, but the Flutter plugin ecosystem is **not ready** for a functional Linux desktop keystroke visualizer. The effort would be better spent on:
+
+1. **Finding mature alternatives** (see recommendations below)
+2. **Contributing to Flutter plugin Linux support**
+3. **Waiting for official Linux support** from keyviz developers
+
+---
+
+*This document serves as a technical record of the Linux porting attempt and its limitations. Last updated: August 28, 2025.*

@@ -33,8 +33,8 @@ dependencies:
   window_manager: ^0.5.1
   path_provider: ^2.1.2
   flutter_animate: ^4.5.2
-  flutter_acrylic: ^1.1.4
-  macos_window_utils: ^1.8.4
+  # flutter_acrylic: ^1.1.4  # Temporarily disabled for Linux compatibility
+  # macos_window_utils: ^1.8.4  # macOS-only dependency
 
 dev_dependencies:
   flutter_test:

@@ -2,8 +2,8 @@
 # Generated file, do not edit.
 #
 
+# flutter_acrylic
 list(APPEND FLUTTER_PLUGIN_LIST
-  flutter_acrylic
   hid_listener
   screen_retriever_linux
   tray_manager
