@@ -39,7 +39,7 @@ File: '/home/stephan/Documents/style.json' not found!
 ### Dependencies Modified
 In `pubspec.yaml`:
 ```yaml
-# flutter_acrylic: ^1.1.4  # Temporarily disabled for Linux compatibility  
+# flutter_acrylic: ^1.1.4  # Temporarily disabled for Linux compatibility
 # macos_window_utils: ^1.8.4  # macOS-only dependency
 ```
 
@@ -83,13 +83,13 @@ The original `keyviz-2.0.0a3-linux.deb` failure was **NOT** due to missing syste
 
 ### For Developers
 1. **Contribute to upstream Flutter plugins**:
-    - `window_manager` needs Linux implementations for `setIgnoreMouseEvents`, `setHasShadow`
-    - `flutter_acrylic` needs Linux transparency support
+   - `window_manager` needs Linux implementations for `setIgnoreMouseEvents`, `setHasShadow`
+   - `flutter_acrylic` needs Linux transparency support
 
 2. **Alternative approaches**:
-    - Use native Linux libraries (e.g., X11/Wayland directly)
-    - Implement as a native GTK/Qt application
-    - Use Electron with native Node.js modules
+   - Use native Linux libraries (e.g., X11/Wayland directly)
+   - Implement as a native GTK/Qt application
+   - Use Electron with native Node.js modules
 
 ## Building This Port
 
@@ -122,6 +122,50 @@ This port demonstrates that keyviz **CAN** be compiled for Linux, but the Flutte
 1. **Finding mature alternatives** (see recommendations below)
 2. **Contributing to Flutter plugin Linux support**
 3. **Waiting for official Linux support** from keyviz developers
+
+## ✅ Recommended Alternative: screenkey
+
+Since keyviz is currently non-functional on Linux, we recommend using **[screenkey](https://gitlab.com/screenkey/screenkey)** - a mature, stable Linux keystroke visualization tool.
+
+### Installation
+```bash
+sudo apt install screenkey
+```
+
+### Features
+- ✅ **Real-time keystroke display** with customizable position (top, center, bottom, fixed)
+- ✅ **Mouse button visualization** with `--mouse` flag
+- ✅ **Modifier key highlighting** (Ctrl, Alt, Shift, etc.)
+- ✅ **Customizable appearance**: font, colors, opacity, size
+- ✅ **Multiple display modes**: composed, translated, keysyms, raw
+- ✅ **System tray integration**
+- ✅ **Multi-monitor support**
+- ✅ **Screencasting-friendly** - designed for presentations and tutorials
+
+### Basic Usage
+```bash
+# Simple keystroke display
+screenkey
+
+# With mouse buttons and custom position
+screenkey --mouse --position top --font-size large
+
+# Show only modifier combinations (like Ctrl+C, Alt+Tab)
+screenkey --mods-only --position bottom
+
+# Custom styling
+screenkey --font-color '#00FF00' --bg-color '#000000' --opacity 0.8
+```
+
+### Why screenkey is better for Linux:
+1. **Native Linux tool** - no Flutter/plugin dependencies
+2. **Actively maintained** with regular updates
+3. **Lightweight** - minimal resource usage
+4. **Reliable** - no crashes or missing features
+5. **Mature** - used by Linux content creators for years
+
+### Output Comparison
+While not identical to keyviz's styled bars, screenkey provides clean, readable keystroke visualization that serves the same purpose for screencasts, presentations, and teaching.
 
 ---
 
